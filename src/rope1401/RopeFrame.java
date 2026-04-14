@@ -763,7 +763,9 @@ public class RopeFrame extends JFrame implements WindowListener, FocusListener
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
 		
-        this.setJMenuBar(menuBar);
+		// Revert to Mak's no menu bar design @rpmorata
+		// TODO: this just hides the menu bar, clean up later
+        //this.setJMenuBar(menuBar);
 	}
 
 	@Override

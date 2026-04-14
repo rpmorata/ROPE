@@ -78,8 +78,10 @@ public class Rope
 		// Retrieve the user preference node
 		Preferences userPrefs = Preferences.userRoot();
 
-		//userPrefs.remove("assemblerPath");
-		//userPrefs.remove("simulatorPath");
+		// These were actually commented out (by Luca?) but when uncommented,
+		// it will be functionally the same as Mak's @rpmorata
+		userPrefs.remove("assemblerPath");
+		userPrefs.remove("simulatorPath");
 
 		// Get the value of the preference;
 		// default value is returned if the preference does not exist
