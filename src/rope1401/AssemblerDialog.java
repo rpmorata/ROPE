@@ -50,7 +50,8 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
     JTextField assemblerText = new JTextField();
     JTextField listingText = new JTextField();
     JTextField objectText = new JTextField();
-    JTextField macroText = new JTextField();
+    JTextField macroDirText = new JTextField();
+    JTextField macroExtsText = new JTextField();
     JTextField tapeText = new JTextField();
     JTextField pageText = new JTextField();
     JTextArea commandArea = new JTextArea();
@@ -61,7 +62,8 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
     JCheckBox encodingCheckBox = new JCheckBox();
     JCheckBox listingCheckBox = new JCheckBox();
     JCheckBox objectCheckBox = new JCheckBox();
-    JCheckBox macroCheckBox = new JCheckBox();
+    JCheckBox macroDirCheckBox = new JCheckBox();
+    JCheckBox macroExtsCheckBox = new JCheckBox();
     JCheckBox tapeCheckBox = new JCheckBox();
     JCheckBox diagnosticCheckBox = new JCheckBox();
     JTextField diagnosticText = new JTextField();
@@ -102,7 +104,8 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
     JButton assemblerBrowseButton = new JButton();
     JButton listingBrowseButton = new JButton();
     JButton objectBrowseButton = new JButton();
-    JButton macroBrowseButton = new JButton();
+    JButton macroDirBrowseButton = new JButton();
+    JButton macroExtsEnterButton = new JButton();
     JButton tapeBrowseButton = new JButton();
     JButton diagnosticBrowseButton = new JButton();
     JButton okButton = new JButton();
@@ -130,7 +133,8 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         assemblerBrowseButton.addActionListener(this);
         listingBrowseButton.addActionListener(this);
         objectBrowseButton.addActionListener(this);
-        macroBrowseButton.addActionListener(this);
+        macroDirBrowseButton.addActionListener(this);
+        macroExtsEnterButton.addActionListener(this);
         tapeBrowseButton.addActionListener(this);
         diagnosticBrowseButton.addActionListener(this);
         okButton.addActionListener(this);
@@ -157,7 +161,8 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         size16000RadioButton.addChangeListener(this);
         listingCheckBox.addChangeListener(this);
         objectCheckBox.addChangeListener(this);
-        macroCheckBox.addChangeListener(this);
+        macroDirCheckBox.addChangeListener(this);
+        macroExtsCheckBox.addChangeListener(this);
         tapeCheckBox.addChangeListener(this);
         diagnosticCheckBox.addChangeListener(this);
         codeOkCheckBox.addChangeListener(this);
@@ -295,12 +300,17 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         encodingARadioButton.setText("Pierce IBM A");
         encodingHRadioButton.setText("Pierce IBM H");
         encodingPrintRadioButton.setText("Print only");
-        encodingButtonGroup.add(encodingSimhRadioButton);
+        encodingButtonGroup.add(encodingSimhRadioButton); // Revert to Ron Mak's order @rpmorata
         encodingButtonGroup.add(encodingARadioButton);
-        encodingButtonGroup.add(encodingHRadioButton);
+        encodingButtonGroup.add(encodingHRadioButton); 
         encodingButtonGroup.add(encodingPrintRadioButton);
 
         encodingPanel.setLayout(gridBagLayout8);
+        encodingPanel.add(encodingSimhRadioButton,
+                          new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                                                 GridBagConstraints.CENTER,
+                                                 GridBagConstraints.NONE,
+                                                 new Insets(5, 0, 0, 0), 0, 0));
         encodingPanel.add(encodingARadioButton,
                           new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                                                  GridBagConstraints.CENTER,
@@ -316,11 +326,6 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
                                                  GridBagConstraints.CENTER,
                                                  GridBagConstraints.NONE,
                                                  new Insets(5, 5, 0, 5), 0, 0));
-        encodingPanel.add(encodingSimhRadioButton,
-                          new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                                                 GridBagConstraints.CENTER,
-                                                 GridBagConstraints.NONE,
-                                                 new Insets(5, 0, 0, 0), 0, 0));
 
         listingCheckBox.setText("Listing:");
         listingText.setText("");
@@ -330,16 +335,23 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         objectText.setText("");
         objectBrowseButton.setText("Browse ...");
 
-        macroCheckBox.setText("Macro library:");
-        macroText.setText("");
-        macroBrowseButton.setText("Browse ...");
-
         tapeCheckBox.setText("Tape file:");
         tapeBrowseButton.setText("Browse ...");
         tapeText.setText("");
 
         diagnosticCheckBox.setText("Diagnostic file:");
         diagnosticBrowseButton.setText("Browse ...");
+
+        // Revert to Ron Mak's version
+        macroDirCheckBox.setText("Macro directories:");
+        macroDirText.setText("");
+        macroDirBrowseButton.setText("Browse ...");
+
+        macroExtsCheckBox.setText("Macro exts [,; ]:");
+        macroExtsText.setText("");
+        macroExtsEnterButton.setText("Enter"); // FIXFIX @rpmorata
+                                        // Button doesn't share width of others in its column
+                                        // Doesn't actually work
 
         codeOkCheckBox.setText("Code in 1..80 is OK");
         interleaveCheckBox.setText("Interleave object deck into listing");
@@ -484,108 +496,124 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 5, 0, 15), 0, 0));
-        optionsPanel.add(macroCheckBox,
+        optionsPanel.add(tapeCheckBox,
                          new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 15, 0, 0), 0, 0));
-        optionsPanel.add(macroText,
+        optionsPanel.add(tapeText,
                          new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.HORIZONTAL,
                                                 new Insets(5, 5, 0, 0), 0, 0));
-        optionsPanel.add(macroBrowseButton,
+        optionsPanel.add(tapeBrowseButton,
                          new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 5, 0, 15), 0, 0));
-        optionsPanel.add(tapeCheckBox,
+        optionsPanel.add(diagnosticCheckBox,
                          new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 15, 0, 0), 0, 0));
-        optionsPanel.add(tapeText,
-                         new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
-                                                GridBagConstraints.CENTER,
-                                                GridBagConstraints.HORIZONTAL,
-                                                new Insets(5, 5, 0, 0), 0, 0));
-        optionsPanel.add(tapeBrowseButton,
-                         new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0,
-                                                GridBagConstraints.CENTER,
-                                                GridBagConstraints.NONE,
-                                                new Insets(5, 5, 0, 15), 0, 0));
-        optionsPanel.add(diagnosticCheckBox,
-                         new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
-                                                GridBagConstraints.WEST,
-                                                GridBagConstraints.NONE,
-                                                new Insets(5, 15, 0, 0), 0, 0));
         optionsPanel.add(diagnosticText,
-                         new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0,
+                         new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.HORIZONTAL,
                                                 new Insets(5, 5, 0, 0), 0, 0));
         optionsPanel.add(diagnosticBrowseButton,
+                         new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.CENTER,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 5, 0, 15), 0, 0));
+        // Return functionality back to Ron Mak's 
+        optionsPanel.add(macroDirCheckBox,
+                         new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.WEST,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 15, 0, 0), 0, 0));
+        optionsPanel.add(macroDirText,
+                         new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
+                                                GridBagConstraints.CENTER,
+                                                GridBagConstraints.HORIZONTAL,
+                                                new Insets(5, 5, 0, 0), 0, 0));
+        optionsPanel.add(macroDirBrowseButton,
                          new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 5, 0, 15), 0, 0));
+        optionsPanel.add(macroExtsCheckBox,
+                         new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.WEST,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 15, 0, 0), 0, 0));
+        optionsPanel.add(macroExtsText,
+                         new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0,
+                                                GridBagConstraints.CENTER,
+                                                GridBagConstraints.HORIZONTAL,
+                                                new Insets(5, 5, 0, 0), 0, 0));
+        optionsPanel.add(macroExtsEnterButton,
+                         new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.CENTER,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 5, 0, 15), 0, 0));
         optionsPanel.add(codeOkCheckBox,
-                         new GridBagConstraints(0, 8, 3, 1, 0.0, 0.0,
+                         new GridBagConstraints(0, 9, 3, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 15, 0, 15), 0, 0));
         optionsPanel.add(interleaveCheckBox,
-                         new GridBagConstraints(0, 9, 4, 1, 0.0, 0.0,
-                                                GridBagConstraints.WEST,
-                                                GridBagConstraints.NONE,
-                                                new Insets(5, 15, 0, 15), 0, 0));
-        optionsPanel.add(storeCheckBox,
                          new GridBagConstraints(0, 10, 4, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 15, 0, 15), 0, 0));
-        optionsPanel.add(dumpCheckBox,
+        optionsPanel.add(storeCheckBox,
                          new GridBagConstraints(0, 11, 4, 1, 0.0, 0.0,
+                                                GridBagConstraints.WEST,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 15, 0, 15), 0, 0));
+        optionsPanel.add(dumpCheckBox,
+                         new GridBagConstraints(0, 12, 4, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 15, 0, 0), 0, 0));
         optionsPanel.add(pageCheckBox,
-                         new GridBagConstraints(0, 12, 2, 1, 0.0, 0.0,
+                         new GridBagConstraints(0, 13, 2, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 15, 0, 0), 0, 0));
         optionsPanel.add(pageText,
-                         new GridBagConstraints(2, 12, 1, 1, 0.0, 0.0,
+                         new GridBagConstraints(2, 13, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 5, 0, 0), 0, 0));
         optionsPanel.add(traceCheckBox,
-                         new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0,
-                                                GridBagConstraints.WEST,
-                                                GridBagConstraints.NONE,
-                                                new Insets(5, 15, 0, 0), 0, 0));
-        optionsPanel.add(tracePanel,
-                         new GridBagConstraints(1, 13, 3, 1, 0.0, 0.0,
-                                                GridBagConstraints.WEST,
-                                                GridBagConstraints.NONE,
-                                                new Insets(0, 0, 0, 0), 0, 0));
-        optionsPanel.add(extrasCheckBox,
                          new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.WEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 15, 0, 0), 0, 0));
-        optionsPanel.add(extrasPanel,
+        optionsPanel.add(tracePanel,
                          new GridBagConstraints(1, 14, 3, 1, 0.0, 0.0,
+                                                GridBagConstraints.WEST,
+                                                GridBagConstraints.NONE,
+                                                new Insets(0, 0, 0, 0), 0, 0));
+        optionsPanel.add(extrasCheckBox,
+                         new GridBagConstraints(0, 15, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.WEST,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 15, 0, 0), 0, 0));
+        optionsPanel.add(extrasPanel,
+                         new GridBagConstraints(1, 15, 3, 1, 0.0, 0.0,
                                                 GridBagConstraints.NORTHWEST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(0, 0, 0, 0), 0, 0));
         optionsPanel.add(commandScrollPanel,
-                         new GridBagConstraints(0, 15, 4, 1, 1.0, 0.0,
+                         new GridBagConstraints(0, 16, 4, 1, 1.0, 0.0,
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.HORIZONTAL,
                                                 new Insets(15, 15, 15, 15), 0, 0));
         optionsPanel.add(buttonPanel,
-                         new GridBagConstraints(0, 16, 4, 1, 1.0, 0.0,
+                         new GridBagConstraints(0, 17, 4, 1, 1.0, 0.0,
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.HORIZONTAL,
                                                 new Insets(0, 0, 0, 0), 0, 0));
@@ -597,7 +625,7 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         assemblerText.setText(AssemblerOptions.assemblerPath);
         listingText.setText(AssemblerOptions.listingPath);
         objectText.setText(AssemblerOptions.objectPath);
-        macroText.setText(AssemblerOptions.macroPath);
+        macroDirText.setText(AssemblerOptions.macroPath);
         tapeText.setText(AssemblerOptions.tapePath);
         pageText.setText(AssemblerOptions.pageLength);
 
@@ -605,7 +633,7 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         encodingCheckBox.setSelected(AssemblerOptions.encoding);
         listingCheckBox.setSelected(AssemblerOptions.listing);
         objectCheckBox.setSelected(AssemblerOptions.object);
-        macroCheckBox.setSelected(AssemblerOptions.macro);
+        macroDirCheckBox.setSelected(AssemblerOptions.macro);
         tapeCheckBox.setSelected(AssemblerOptions.tape);
         diagnosticCheckBox.setSelected(AssemblerOptions.diagnostic);
         codeOkCheckBox.setSelected(AssemblerOptions.codeOk);
@@ -788,11 +816,11 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
             command.append(objectText.getText());
         }
 
-        if (macroCheckBox.isSelected()) 
+        if (macroDirCheckBox.isSelected()) 
 		{
 			command.append(" -m macro");
 			
-            String paths[] = macroText.getText().split(";");
+            String paths[] = macroDirText.getText().split(";");
 
             for (int i = 0; i < paths.length; ++i) 
 			{
@@ -911,8 +939,9 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         AssemblerOptions.listingPath = listingText.getText();
         AssemblerOptions.object = objectCheckBox.isSelected();
         AssemblerOptions.objectPath = objectText.getText();
-        AssemblerOptions.macro = macroCheckBox.isSelected();
-        AssemblerOptions.macroPath = macroText.getText();
+        AssemblerOptions.macro = macroDirCheckBox.isSelected();
+        AssemblerOptions.macroPath = macroDirText.getText();
+        AssemblerOptions.macroExts = macroExtsText.getText(); // Added to revert to Mak's @rpmorata
         AssemblerOptions.tape = tapeCheckBox.isSelected();
         AssemblerOptions.tapePath = tapeText.getText();
         AssemblerOptions.diagnostic = diagnosticCheckBox.isSelected();
@@ -949,6 +978,13 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
         this.setVisible(false);
     }
 
+    // Added to revert to Mak's @rpmorata
+    private void macroExtsEnterAction()
+    {
+        // FIXFIX: What does the Enter button actually do? @rpmorata
+        AssemblerOptions.macroExts = macroExtsText.getText();
+    }
+
 	@Override
     public void actionPerformed(ActionEvent event)
     {
@@ -979,11 +1015,6 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
             browseAction("Object path selection", AssemblerOptions.objectPath, objectText, filters, false, false);
             buildCommand();
         }
-        else if (source == macroBrowseButton) 
-		{
-            browseAction("Macro path selection", AssemblerOptions.macroPath, macroText, null, true, true);
-            buildCommand();
-        }
         else if (source == tapeBrowseButton) 
 		{
             browseAction("Tape path selection", AssemblerOptions.tapePath, tapeText, null, false, false);
@@ -993,6 +1024,17 @@ public class AssemblerDialog extends JDialog implements ActionListener, ChangeLi
 		{
             browseAction("Diagnostic path selection", AssemblerOptions.diagnosticPath, diagnosticText, null, false, false);
             buildCommand();
+        }
+        // Moved in order as seen on screen when reverted to Mak's @rpmorata
+        else if (source == macroDirBrowseButton) 
+		{
+            browseAction("Macro path selection", AssemblerOptions.macroPath, macroDirText, null, true, true);
+            buildCommand();
+        }
+        // Added to revert to Mak's @rpmorata
+        else if (source == macroExtsEnterButton) 
+		{
+            macroExtsEnterAction();
         }
         else if (source == pageText) 
 		{

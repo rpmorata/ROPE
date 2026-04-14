@@ -34,6 +34,7 @@ class AssemblerOptions
     static String listingPath;
     static String objectPath;
     static String macroPath;
+    static String macroExts;
     static String tapePath;
     static String diagnosticPath;
     static String pageLength = "60";

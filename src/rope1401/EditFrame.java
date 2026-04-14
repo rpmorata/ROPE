@@ -328,10 +328,10 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
     {
 		Vector<RopeFileFilter> filters = new Vector<RopeFileFilter>();
 		filters.add(new RopeFileFilter(new String[] {".a", ".asm", ".aut", ".s"}, "Assembly files (*.a *.asm *.aut *.s)"));
-		filters.add(new RopeFileFilter(new String[] {".m", ".mac"}, "Macro files (*.m *.mac)"));
+		//filters.add(new RopeFileFilter(new String[] {".m", ".mac"}, "Macro files (*.m *.mac)")); // Removed to revert back to Mak's @rpmorata
         RopeFileChooser chooser = new RopeFileChooser(DataOptions.directoryPath, null, filters);
 		chooser.setDialogTitle("Source document selection");
-		chooser.setFileFilter(filters.firstElement());
+		//chooser.setFileFilter(filters.firstElement()); // we want "All Files" selected by default to revert back to Mak's @rpmorata
 		chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		
         File file = chooser.choose(fileText, this);
