@@ -493,6 +493,8 @@ public class RopeFrame extends JFrame implements WindowListener, FocusListener
 	
 	public boolean quitRope()
 	{
+		// Revert program exit functionality back to Mak's @rpmorata
+		/*
 		if(editFrame.sourcePath != null && editFrame.sourceChanged)
 		{
 			int result = JOptionPane.showConfirmDialog(null, "Do you want to save the changes to the edited file?", "Exit Rope",
@@ -516,6 +518,8 @@ public class RopeFrame extends JFrame implements WindowListener, FocusListener
 
 			closed = true;
 		}
+		*/
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		return closed;
 	}
