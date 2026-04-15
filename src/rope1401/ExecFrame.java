@@ -47,6 +47,7 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
     JPanel filler1Panel = new JPanel();
     JPanel filler2Panel = new JPanel();
     JCheckBox showAllCheckBox = new JCheckBox();
+    JCheckBox verboseCheckBox = new JCheckBox();
     JButton simulatorButton = new JButton();
     JButton optionsButton = new JButton();
     JButton dataButton = new JButton();
@@ -216,13 +217,16 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
         filler1Panel.setLayout(null);
         filler2Panel.setLayout(null);
         simulatorButton.setEnabled(true);
-        simulatorButton.setText("Kill simulator");
-        optionsButton.setEnabled(false);
-        optionsButton.setText("Simulator options ...");
+        simulatorButton.setText("Reboot simulator");
+        //optionsButton.setEnabled(false);
+        //optionsButton.setText("Simulator options ...");
         dataButton.setEnabled(true);
         dataButton.setText("Runtime data ...");
         showAllCheckBox.setEnabled(true);
-        showAllCheckBox.setText("Show all");
+        showAllCheckBox.setText("Full listing"); // Reverted back to Mak's, from "Show all" @rpmorata
+        verboseCheckBox.setEnabled(true); //    vvvvvvv
+        verboseCheckBox.setText("Verbose"); // Reverted back to Mak's @rpmorata
+                                // FIXFIX: What does the Enter button actually do? @rpmorata
         startButton.setEnabled(false);
         startButton.setText("Start program");
         quitButton.setEnabled(false);
@@ -241,6 +245,7 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
         showConsoleButton.setText("Console ...");
         showTimerButton.setText("Timers ...");
         listingScrollPane.getViewport().add(listing, null);
+
         controlPanel.add(messagePanel,
                          new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0,
                                                 GridBagConstraints.CENTER,
@@ -257,27 +262,44 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.HORIZONTAL,
                                                new Insets(5, 5, 0, 0), 0, 0));
+        // Revert to Mak's design for the EXEC frame @rpmorata
+        /*
         buttonPanel.add(optionsButton,
                         new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.HORIZONTAL,
                                                new Insets(5, 5, 5, 0), 0, 0));
+        */
         buttonPanel.add(dataButton,
-                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                        new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.HORIZONTAL,
-                                               new Insets(5, 20, 0, 15), 0, 0));
+                                               new Insets(5, 5, 5, 0), 0, 0));
         buttonPanel.add(showAllCheckBox,
+                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                                               GridBagConstraints.CENTER,
+                                               GridBagConstraints.NONE,
+                                               new Insets(5, 5, 0, 15), 0, 0));
+        // Revert to Mak's design for the EXEC frame @rpmorata
+        buttonPanel.add(verboseCheckBox,
                         new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.NONE,
-                                               new Insets(5, 5, 5, 0), 0, 0));
+                                               new Insets(5, 5, 0, 15), 0, 0));
         buttonPanel.add(startButton,
                         new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.HORIZONTAL,
                                                new Insets(5, 5, 0, 0), 0, 0));
+        // Revert to Mak's design for the EXEC frame @rpmorata
+        /*
         buttonPanel.add(quitButton,
+                        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
+                                               GridBagConstraints.CENTER,
+                                               GridBagConstraints.HORIZONTAL,
+                                               new Insets(5, 5, 5, 0), 0, 0));
+        */
+        buttonPanel.add(showTimerButton,
                         new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.HORIZONTAL,
@@ -302,22 +324,16 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.HORIZONTAL,
                                                new Insets(5, 5, 0, 0), 0, 0));
-        buttonPanel.add(showTimerButton,
+        buttonPanel.add(showMemoryButton,
+                        new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0,
+                                               GridBagConstraints.SOUTH,
+                                               GridBagConstraints.HORIZONTAL,
+                                               new Insets(5, 5, 0, 5), 0, 0));
+        buttonPanel.add(showConsoleButton,
                         new GridBagConstraints(5, 1, 1, 1, 0.0, 0.0,
                                                GridBagConstraints.CENTER,
                                                GridBagConstraints.HORIZONTAL,
                                                new Insets(5, 5, 5, 5), 0, 0));
-        buttonPanel.add(showMemoryButton,
-                        new GridBagConstraints(6, 0, 1, 1, 0.0, 0.0,
-                                               GridBagConstraints.SOUTH,
-                                               GridBagConstraints.HORIZONTAL,
-                                               new Insets(5, 0, 0, 5), 0, 0));
-        buttonPanel.add(showConsoleButton,
-                        new GridBagConstraints(6, 1, 1, 1, 0.0, 0.0,
-                                               GridBagConstraints.CENTER,
-                                               GridBagConstraints.HORIZONTAL,
-                                               new Insets(5, 0, 5, 5), 0, 0));
-
         this.getContentPane().add(listingScrollPane, BorderLayout.CENTER);
         this.getContentPane().add(controlPanel, BorderLayout.SOUTH);
         buttonPanel.add(filler2Panel,
@@ -370,7 +386,7 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
 
             if (simulatorRunning) 
 			{
-                killSimulator();
+                rebootSimulator();
             }
 
             if(startSimulator())
@@ -391,7 +407,7 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
     {
         if (simulatorRunning) 
 		{
-            killSimulator();
+            rebootSimulator();
         }
 		
 		mainFrame.resetMemoryFrame();
@@ -687,7 +703,7 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
     {
         if (simulatorRunning) 
 		{
-            killSimulator();
+            rebootSimulator();
 			
             dataButton.setEnabled(true);
        }
@@ -738,12 +754,15 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
         mainFrame.showPrintoutWindow(baseName);
 
         simulatorRunning = true;
-        simulatorButton.setText("Kill simulator");
+        simulatorButton.setText("Reboot simulator"); // Reverted back to Mak's design and
+                                        // functionality for the top and left-most button @rpmorata
 		
 		return true;
     }
 
-    private void killSimulator()
+    // Was "killSimulator" but have reverted back to Mak's design and functionality
+    // for the top and left-most button @rpmorata
+    private void rebootSimulator()
     {
         if (autoStepping) 
 		{
@@ -774,6 +793,8 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
         simulatorRunning = false;
         programRunning = false;
         simulatorButton.setText("Restart simulator");
+
+        startSimulator(); // Revert to Mak's functionality for the simulator buttons @rpmorata
     }
 
     private void optionsAction()
@@ -794,7 +815,7 @@ public class ExecFrame extends ChildFrame implements ActionListener, ChangeListe
         dialog.initialize();
         dialog.setVisible(true);
 		
-        killSimulator();
+        rebootSimulator();
 		
 		mainFrame.resetMemoryFrame();
     }
