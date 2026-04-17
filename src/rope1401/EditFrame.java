@@ -50,6 +50,8 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
     JScrollPane messageScrollPane = new JScrollPane();
     JList messageList = new JList();
 
+	private Color barColor = new Color(15, 15, 15); // For bars @rpmorata
+
 	// FORTRAN: Button for compiling with FORTRAN @rpmorata
 	JButton fortranCompileButton = new JButton();
 	// MACHINE-CODE: Button for loading machine language program into core storage @rpmorata
@@ -163,6 +165,38 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
         this.setResizable(true);
 		
         this.setTitle("EDIT");
+
+		sourceArea = new JTextArea() 
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+            public void paint(Graphics g)
+            {
+                super.paint(g);
+
+				Dimension size = this.getSize();
+				FontMetrics fm = g.getFontMetrics();
+				int charWidth = fm.charWidth('w');
+				int w = 7*charWidth;
+				int x1 = 7*charWidth;
+				int x2 = x1 + 2*w;
+				int x3 = x1 + 4*w;
+				int x4 = x1 + 6*w;
+				int x5 = x1 + 8*w;
+				int x6 = x1 + 10*w;
+
+				g.setColor(barColor);
+				g.setXORMode(Color.BLACK);
+				g.fillRect(x1, 0, w, size.height);
+				g.fillRect(x2, 0, w, size.height);
+				g.fillRect(x3, 0, w, size.height);
+				g.fillRect(x4, 0, w, size.height);
+				g.fillRect(x5, 0, w, size.height);
+				g.fillRect(x6, 0, w, size.height);
+				g.setPaintMode();
+            }
+        };
 
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setDividerLocation(470);
