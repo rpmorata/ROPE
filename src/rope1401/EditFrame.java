@@ -52,6 +52,8 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
 
 	// FORTRAN: Button for compiling with FORTRAN @rpmorata
 	JButton fortranCompileButton = new JButton();
+	// MACHINE-CODE: Button for loading machine language program into core storage @rpmorata
+	JButton loadToCoreButton = new JButton();
 	
 	public CompoundUndoManager undoMgr;
     private AssemblerDialog dialog = null;
@@ -85,6 +87,7 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
         optionsButton.addActionListener(this);
         assembleButton.addActionListener(this);
 		fortranCompileButton.addActionListener(this); // FORTRAN @rpmorata
+		loadToCoreButton.addActionListener(this); // MACHINE-CODE @rpmorata
         saveButton.addActionListener(this);
 
         messageList.addMouseListener(new MouseAdapter()
@@ -175,6 +178,8 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
         assembleButton.setText("Assemble file");
 		fortranCompileButton.setEnabled(false); // FORTRAN @rpmorata
         fortranCompileButton.setText("Fortran compile file"); // FORTRAN @rpmorata
+		loadToCoreButton.setEnabled(false); // MACHINE-CODE @rpmorata
+        loadToCoreButton.setText("Load file into core"); // MACHINE-CODE @rpmorata
         saveButton.setEnabled(false);
         saveButton.setText("Save file");
         lineLabel.setText("Line:");
@@ -214,6 +219,11 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
                                                 new Insets(5, 5, 0, 5), 0, 0));
 		controlPanel.add(fortranCompileButton,
                          new GridBagConstraints(4, 2, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.EAST,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 5, 0, 0), 0, 0));
+		controlPanel.add(loadToCoreButton,
+                         new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
                                                 GridBagConstraints.EAST,
                                                 GridBagConstraints.NONE,
                                                 new Insets(5, 5, 0, 0), 0, 0));
@@ -338,6 +348,11 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
 		{
             fortranCompileAction();
         }
+		// MACHINE-CODE @rpmorata
+        else if (button == loadToCoreButton) 
+		{
+            loadToCoreAction();
+        }
     }
 
     private void browseAction()
@@ -414,6 +429,7 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
                 optionsButton.setEnabled(true);
                 assembleButton.setEnabled(true);
                 fortranCompileButton.setEnabled(true); // FORTRAN @rpmorata
+				loadToCoreButton.setEnabled(true); // MACHINE-CODE @rpmorata
                 saveButton.setEnabled(true);
 				
 				sourceChanged = false;
@@ -478,6 +494,8 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
 		assembleFailed = false;
         haveAssemblyErrors = false;
 
+		Fortran.setDoFortran(true);
+
         if(Fortran.version())
 		{
 			while ((line = Fortran.output()) != null) 
@@ -524,6 +542,73 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
 			
 			JOptionPane.showMessageDialog(this, message);
 		}
+
+		Fortran.setDoFortran(false);
+    }
+
+	// MACHINE-CODE @rpmorata
+	// TODO: remove assembler/autocoder stuff
+	private void loadToCoreAction()
+    {
+        String line;
+        messages = new Vector();
+
+        mainFrame.resetExecWindow();
+
+        saveAction();
+		assembleFailed = false;
+        haveAssemblyErrors = false;
+
+		MachineCode.setDoMachineCode(true);
+
+        if(MachineCode.version())
+		{
+			while ((line = MachineCode.output()) != null) 
+			{
+				messages.addElement(line);
+			}
+
+			MachineCode.setPaths(baseName, sourcePath);
+
+			if(MachineCode.assemble())
+			{
+				while ((line = MachineCode.output()) != null) 
+				{
+					messages.addElement(line);
+					// MACHINE-CODE: Trick ROPE into bypassing autocoder @rpmorata
+					//haveAssemblyErrors = true;
+					haveAssemblyErrors = false;
+				}
+
+				messageList.setListData(messages);
+				messageList.ensureIndexIsVisible(0);
+
+				mainFrame.showExecWindow(baseName);
+			}
+			else
+			{
+				// MACHINE-CODE: Trick ROPE into bypassing autocoder @rpmorata
+				// assembleFailed = true;
+				assembleFailed = false;
+			}
+		}
+		else
+		{
+			// MACHINE-CODE: Trick ROPE into bypassing autocoder @rpmorata
+			// assembleFailed = true;
+			assembleFailed = false;
+		}
+		
+		if(assembleFailed)
+		{
+			String message = String.format("Autocoder failed!\nVerify the correctness of autocoder path\n%s", 
+																						AssemblerOptions.assemblerPath);
+			System.out.println(message);	
+			
+			JOptionPane.showMessageDialog(this, message);
+		}
+
+		MachineCode.setDoMachineCode(false);
     }
 
     private void optionsAction()

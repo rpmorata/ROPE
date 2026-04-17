@@ -87,16 +87,19 @@ class Simulator
         synchronized(Simulator.class) 
 		{
             // FORTRAN: Doing this just to test @rpmorata
-            //execute("at cdr " + DataOptions.inputPath);
+            if (!Fortran.getDoFortran())execute("at cdr " + DataOptions.inputPath);
             //execute("at cdr H:\\rope09\\src\\EXAMPLE1.txt");
-            execute("at cdr " + DataOptions.inputPath1);
+            if (Fortran.getDoFortran() || MachineCode.getDoMachineCode()) execute("at cdr " + DataOptions.inputPath1);
             execute("at lpt " + DataOptions.outputPath);
 
             // FORTRAN: Just a proof of concept, but I will mount Fortran like this @rpmorata
-            execute("at mt1 H:\\SIMH\\v3m0.simh.mt1");
-            execute("at cdp H:\\SIMH\\out.txt");
-            execute("b mt1");
-            execute("c");
+            if (Fortran.getDoFortran())
+            {
+                execute("at mt1 H:\\SIMH\\v3m0.simh.mt1");
+                execute("at cdp H:\\SIMH\\out.txt");
+                execute("b mt1");
+                execute("c");
+            }
 
             if (DataOptions.unitCommands != null) 
 			{

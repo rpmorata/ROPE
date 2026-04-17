@@ -11,14 +11,14 @@ package rope1401;
 
 import java.io.*;
 
-class Fortran
+class MachineCode
 {
 	// private static String sourceName;
 	// private static String sourcePath;
     private static BufferedReader stdout;
     private static Process process;
 
-    private static boolean doFortran;
+    private static boolean doMachineCode;
 
     static void setPaths(String sourceName, String sourcePath)
     {
@@ -96,14 +96,14 @@ class Fortran
             System.out.println("Assembler killed");
         }
     }
-
-    public static boolean getDoFortran()
+    
+    public static boolean getDoMachineCode()
     {
-        return doFortran;
+        return doMachineCode;
     }
 
-    public static void setDoFortran(boolean x)
+    public static void setDoMachineCode(boolean x)
     {
-        doFortran = x;
+        doMachineCode = x;
     }
 }

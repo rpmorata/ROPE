@@ -18,8 +18,6 @@ class Fortran
     private static BufferedReader stdout;
     private static Process process;
 
-    private static boolean doFortran;
-
     static void setPaths(String sourceName, String sourcePath)
     {
 		// Assembler.sourceName = sourceName;
@@ -95,15 +93,5 @@ class Fortran
             process.destroy();            
             System.out.println("Assembler killed");
         }
-    }
-
-    public static boolean getDoFortran()
-    {
-        return doFortran;
-    }
-
-    public static void setDoFortran(boolean x)
-    {
-        doFortran = x;
     }
 }
