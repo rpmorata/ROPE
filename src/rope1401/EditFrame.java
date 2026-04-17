@@ -49,6 +49,9 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
     JTextField columnText = new JTextField();
     JScrollPane messageScrollPane = new JScrollPane();
     JList messageList = new JList();
+
+	// FORTRAN: Button for compiling with FORTRAN @rpmorata
+	JButton fortranCompileButton = new JButton();
 	
 	public CompoundUndoManager undoMgr;
     private AssemblerDialog dialog = null;
@@ -81,6 +84,7 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
         browseButton.addActionListener(this);
         optionsButton.addActionListener(this);
         assembleButton.addActionListener(this);
+		fortranCompileButton.addActionListener(this); // FORTRAN @rpmorata
         saveButton.addActionListener(this);
 
         messageList.addMouseListener(new MouseAdapter()
@@ -169,6 +173,8 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
         browseButton.setText("Browse ...");
         assembleButton.setEnabled(false);
         assembleButton.setText("Assemble file");
+		fortranCompileButton.setEnabled(false); // FORTRAN @rpmorata
+        fortranCompileButton.setText("Fortran compile file"); // FORTRAN @rpmorata
         saveButton.setEnabled(false);
         saveButton.setText("Save file");
         lineLabel.setText("Line:");
@@ -206,6 +212,11 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
                                                 GridBagConstraints.CENTER,
                                                 GridBagConstraints.HORIZONTAL,
                                                 new Insets(5, 5, 0, 5), 0, 0));
+		controlPanel.add(fortranCompileButton,
+                         new GridBagConstraints(4, 2, 1, 1, 0.0, 0.0,
+                                                GridBagConstraints.EAST,
+                                                GridBagConstraints.NONE,
+                                                new Insets(5, 5, 0, 0), 0, 0));
         controlPanel.add(optionsButton,
                          new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0,
                                                 GridBagConstraints.EAST,
@@ -322,6 +333,11 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
 		{
             assembleAction();
         }
+		// FORTRAN @rpmorata
+        else if (button == fortranCompileButton) 
+		{
+            fortranCompileAction();
+        }
     }
 
     private void browseAction()
@@ -356,6 +372,7 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
 			AssemblerOptions.macroPath = directoryPath;
 			
  			DataOptions.inputPath = AssemblerOptions.objectPath;
+			DataOptions.inputPath1 = file.getAbsolutePath(); // FORTRAN @rpmorata
             DataOptions.outputPath = basePath + ".out";
             DataOptions.readerPath = null;
             DataOptions.punchPath = basePath + ".pch";
@@ -396,6 +413,7 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
                 sourceArea.setCaretPosition(0);
                 optionsButton.setEnabled(true);
                 assembleButton.setEnabled(true);
+                fortranCompileButton.setEnabled(true); // FORTRAN @rpmorata
                 saveButton.setEnabled(true);
 				
 				sourceChanged = false;
@@ -445,6 +463,67 @@ public class EditFrame extends ChildFrame implements ActionListener, CaretListen
                 catch (IOException ignore) {}
             }
         }
+    }
+
+	// FORTRAN @rpmorata
+	// TODO: remove assembler/autocoder stuff
+	private void fortranCompileAction()
+    {
+        String line;
+        messages = new Vector();
+
+        mainFrame.resetExecWindow();
+
+        saveAction();
+		assembleFailed = false;
+        haveAssemblyErrors = false;
+
+        if(Fortran.version())
+		{
+			while ((line = Fortran.output()) != null) 
+			{
+				messages.addElement(line);
+			}
+
+			Fortran.setPaths(baseName, sourcePath);
+
+			if(Fortran.assemble())
+			{
+				while ((line = Fortran.output()) != null) 
+				{
+					messages.addElement(line);
+					// FORTRAN: Trick ROPE into bypassing autocoder @rpmorata
+					//haveAssemblyErrors = true;
+					haveAssemblyErrors = false;
+				}
+
+				messageList.setListData(messages);
+				messageList.ensureIndexIsVisible(0);
+
+				mainFrame.showExecWindow(baseName);
+			}
+			else
+			{
+				// FORTRAN: Trick ROPE into bypassing autocoder @rpmorata
+				// assembleFailed = true;
+				assembleFailed = false;
+			}
+		}
+		else
+		{
+			// FORTRAN: Trick ROPE into bypassing autocoder @rpmorata
+			// assembleFailed = true;
+			assembleFailed = false;
+		}
+		
+		if(assembleFailed)
+		{
+			String message = String.format("Autocoder failed!\nVerify the correctness of autocoder path\n%s", 
+																						AssemblerOptions.assemblerPath);
+			System.out.println(message);	
+			
+			JOptionPane.showMessageDialog(this, message);
+		}
     }
 
     private void optionsAction()

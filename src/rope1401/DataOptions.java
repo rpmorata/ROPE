@@ -8,6 +8,7 @@ class DataOptions
     static ArrayList unitCommands;
 
     static String inputPath;
+    static String inputPath1; // FORTRAN: basically the absolute path of whatever's in the editor @rpmorata
     static String outputPath;
 
     static String readerPath;
